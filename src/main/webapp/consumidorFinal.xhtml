@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <h:head>
+        <title>Factura Consumidor Final</title>
+    </h:head>
+
+    <h:body>
+     <ui:composition template="templates/template.xhtml">
+      <ui:define name="content">    
+        <p:growl id="msgs" showDetail="true" autoUpdate="true" />
+        <h2>Factura Comercial</h2>
+        <h:form>
+            <p:panelGrid>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="Fecha:" style="font-weight:bold"/>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="#{facturaMB.facturaTemp.fecha}"/>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="Factura N°:" style="font-weight:bold"/>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="000#{facturaMB.facturaTemp.noFactura}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="Sucursal:" style="font-weight:bold"/>
+                    </p:column>
+                    <p:column colspan="3">
+                        <p:outputLabel value="#{facturaMB.facturaTemp.codSucursal.nomSucursal}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="Cod. Vendedor:" style="font-weight:bold"/>
+                    </p:column>
+                    <p:column colspan="3">
+                       <p:outputLabel value="#{facturaMB.facturaTemp.codVendedor.codVendedor}"/> 
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="Cliente:" style="font-weight:bold"/>
+                    </p:column>
+                    <p:column colspan="3">
+                        <p:outputLabel value="#{facturaMB.facturaTemp.codCliente.nomcliente}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="4">
+                        <h:dataTable value="#{facturaMB.facturaTemp.tbldetfacturaList}" var="detFacturaItem"
+                                     styleClass="order-table"
+                                     headerClass="order-table-header"
+                                     rowClasses="order-table-odd-row,order-table-even-row">
+                            <h:column>
+                                <f:facet name="header">Codigo</f:facet>
+                        #{detFacturaItem.tblproductos.codProducto}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Producto</f:facet>
+                        #{detFacturaItem.tblproductos.nomProducto}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Precio venta</f:facet>
+                       $  #{detFacturaItem.precioVenta}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Cantidad</f:facet>
+                        #{detFacturaItem.cantidad}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Importe</f:facet>
+                                $ #{detFacturaItem.precioVenta * detFacturaItem.cantidad}
+                            </h:column>
+                        </h:dataTable>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="2" style="text-align: right">
+                         <p:outputLabel value="Total a pagar: $" style="font-weight:bold"/>
+                    </p:column>
+                    <p:column colspan="2" style="text-align: right">
+                        <h:outputText value="#{facturaMB.facturaTemp.total}">
+                            <f:convertNumber pattern="$ #0.00"/>
+                        </h:outputText>
+                    </p:column>
+                </p:row>
+                
+            </p:panelGrid>
+        </h:form>
+          </ui:define>
+
+        </ui:composition>
+    </h:body>
+</html>

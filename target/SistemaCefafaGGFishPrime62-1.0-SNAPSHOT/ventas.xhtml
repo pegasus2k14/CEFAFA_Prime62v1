@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <h:head>
+        <title>Cefafa Facturacion</title>
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{facturaMB.obtenerFacturas()}"/>
+        </f:metadata>
+    </h:head>
+    
+
+    <h:body>
+      <ui:composition template="templates/template.xhtml">
+            <ui:define name="content">  
+        <p:growl id="msgs" showDetail="true" autoUpdate="true" />
+        <h2>Historial de ventas</h2>
+        <h:form>
+            <p:commandButton actionListener="#{facturaMB.volverInicio()}" value="Inicio"/>
+            <br/>
+            <br/><br/>
+            <p:dataTable var="fact" value="#{facturaMB.listFacturas}" rows="10"
+                         paginator="true"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15">
+                <p:column headerText="Fecha">
+                    <h:outputText value="#{fact.fecha}">
+                       <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="N° Factura">
+                    <h:outputText value="000#{fact.noFactura}" />
+                </p:column>
+
+                <p:column headerText="Sucursal" filterBy="##{fact.codSucursal.nomSucursal}" filterMatchMode="contains">
+                    <h:outputText value="#{fact.codSucursal.nomSucursal}" />
+                </p:column>
+
+                <p:column headerText="Vendedor" filterBy="#{fact.codVendedor.nomVendedor}" filterMatchMode="contains" >
+                    <h:outputText value="#{fact.codVendedor.nomVendedor}" />
+                </p:column>
+                
+                <p:column headerText="Cliente">
+                    <h:outputText value="#{fact.codCliente.nomcliente}" />
+                </p:column>
+                
+                <p:column headerText="TipoDocumento">
+                    <h:outputText value="#{fact.tipo == 1?'Factura':'Credito Fiscal'}" />
+                </p:column>
+                
+                <p:column headerText="Total facturado">
+                    <h:outputText value="#{fact.total}">
+                        <f:convertNumber pattern="$ #0.00"/>
+                    </h:outputText>
+                </p:column>
+                <p:column headerText="Opcion">
+                    <div style="float: left">
+                        <p:commandLink styleClass="ui-icon ui-icon-search" title="Ver factura" value="Ver factura"
+                                   actionListener="#{facturaMB.DesplegarFactura(fact.noFactura)}">
+                     </p:commandLink> 
+                    </div> 
+                    <div style="float: left">
+                     <p:commandLink styleClass="ui-icon ui-icon-print" title="Preview factura" value="Imprimir factura"
+                                    actionListener="#{facturaMB.createReport(fact.noFactura)}" target="_blank" ajax="false">
+                     </p:commandLink> 
+                    </div>
+                    
+                </p:column>
+
+            </p:dataTable>
+        </h:form>
+           </ui:define>
+
+        </ui:composition>
+    </h:body>
+</html>

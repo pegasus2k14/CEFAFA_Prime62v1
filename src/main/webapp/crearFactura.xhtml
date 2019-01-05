@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <h:head>
+        <title>Cefafa Facturacion</title>
+    </h:head>
+    <h:body>
+      <ui:composition template="templates/template.xhtml">
+        <ui:define name="content">    
+        <p:growl id="msgs" showDetail="true" autoUpdate="true" />
+        <h2>Creacion de factura</h2>
+        <h:form>
+            <h:panelGrid id="panelPersonas" columns="2" >
+                <p:outputLabel for="sucursal" value="Sucursal:"/>
+                <p:selectOneMenu id="sucursal" value="#{facturaMB.idSucursal}" required="true" style="width: 225px" >
+                     <p:ajax listener="#{facturaMB.cargarVendedores()}" update="vendedor" process="sucursal"/>
+                    <f:selectItem itemLabel="--Seleccione--" itemValue="#{null}" noSelectionOption="true"/>
+                    <c:forEach items="#{facturaMB.listSucursal}" var="sucursalItem">
+                        <f:selectItem itemValue="#{sucursalItem.codSucursal}" itemLabel="#{sucursalItem.nomSucursal}" />
+                    </c:forEach>
+               </p:selectOneMenu>
+                
+                <p:outputLabel for="cliente" value="Cliente:" />
+                <p:selectOneMenu id="cliente" value="#{facturaMB.idCliente}" required="true" style="width: 225px">
+                    <f:selectItem itemLabel="--Seleccione--" itemValue="#{null}" noSelectionOption="true"/>
+                    <c:forEach items="#{facturaMB.listClientes}" var="clienteItem">
+                        <f:selectItem itemValue="#{clienteItem.codCliente}" itemLabel="#{clienteItem.nomcliente}" />
+                    </c:forEach>
+                </p:selectOneMenu>
+                
+                <p:outputLabel for="vendedor" value="Vendedor:"/>
+                <p:selectOneMenu id="vendedor" value="#{facturaMB.idVendedor}" required="true" style="width: 225px">
+                     <f:selectItem itemLabel="--Seleccione--" itemValue="#{null}" noSelectionOption="true"/>
+                     <c:forEach items="#{facturaMB.listVendedores}" var="vendedorItem">
+                         <f:selectItem itemValue="#{vendedorItem.codVendedor}" itemLabel="#{vendedorItem.nomVendedor}" />
+                    </c:forEach>
+                </p:selectOneMenu>
+                
+                
+                
+                <p:outputLabel for="tipoDoc" value="Tipo Documento:"/>
+                <p:selectOneMenu id="tipoDoc" value="#{facturaMB.tipoDoc}" required="true" style="width: 225px">
+                    <f:selectItem itemLabel="--Seleccione--" itemValue="#{null}" noSelectionOption="true"/>
+                    <f:selectItem itemLabel="Factura" itemValue="1"/>
+                    <f:selectItem itemLabel="Credito Fiscal" itemValue="2"/>
+               </p:selectOneMenu>
+                
+            </h:panelGrid>
+             
+            <h:panelGrid id="panelProductos" columns="7">
+                <p:outputLabel for="prod" value="Productos a incluir:"/>
+                <p:selectOneMenu id="prod" value="#{facturaMB.idProducto}" style="width: 225px">
+                    <p:ajax  process="prod" listener="#{facturaMB.getExistencia()}" update="udisponible"/> 
+                    <f:selectItem itemLabel="--Seleccione--" itemValue="#{null}" noSelectionOption="true"/>
+                    <c:forEach items="#{facturaMB.listProductos}" var="productoItem">
+                        <f:selectItem itemValue="#{productoItem.codProducto}" itemLabel="#{productoItem.nomProducto}" />
+                    </c:forEach>
+               </p:selectOneMenu>
+                <p:outputLabel for="cantidad" value="Cantidad"/>
+                <p:inputNumber id="cantidad" value="#{facturaMB.cantidadProd}" minValue="0" decimalPlaces="0" style="width: 225px"/>
+                <p:commandButton actionListener="#{facturaMB.addProductoToList()}" value="Agregar" process="@this cantidad" update="detail prod cantidad"/>
+                <p:outputLabel for="udisponible" value="U. disponibles: "/>
+                <p:outputLabel id="udisponible" value="#{facturaMB.getuDisponibles()}"/>
+                
+            </h:panelGrid>
+ 
+            <br/><br/>
+            <p:dataTable id="detail" var="det" value="#{facturaMB.listDetalleFactura}">
+                <p:column headerText="Producto">
+                    <h:outputText value="#{det.tblproductos.nomProducto}"/>
+                </p:column>
+                <p:column headerText="Precio de venta">
+                    <h:outputText value="$ #{det.precioVenta}"/>
+                </p:column>
+                
+                <p:column headerText="Cantidad">
+                    <h:outputText value="#{det.cantidad}"/>
+                </p:column>
+                <p:column headerText="Importe">
+                    <h:outputText value="$ #{det.precioVenta*det.cantidad}"/>
+                </p:column>
+            </p:dataTable>
+            <br/>
+            <br/>
+            <center>
+                <p:commandButton actionListener="#{facturaMB.registrarFactura()}" value="Registrar" />
+                <p:commandButton actionListener="#{facturaMB.cancelar()}" value="Cancelar" immediate="true" />
+            </center>
+        </h:form>
+          </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
